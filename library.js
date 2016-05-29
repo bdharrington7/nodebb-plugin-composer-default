@@ -155,6 +155,15 @@ plugin.build = function(data, callback) {
 		}
 
 		function ready() {
+			var action = 'topics.post';
+			if (!!req.query.tid) {
+				action = 'posts.reply';
+			} else if (!!req.query.pid) {
+				action = 'posts.edit';
+			} else {
+				data.isMain = true;
+			}
+
 			callback(null, {
 				req: req,
 				res: res,
@@ -167,9 +176,12 @@ plugin.build = function(data, callback) {
 					discardRoute: discardRoute,
 
 					resizable: false,
+					allowTopicsThumbnail: meta.config.allowTopicsThumbnail && data.isMain,
 
 					topicTitle: data.topicData ? data.topicData.title.replace(/%/g, '&#37;').replace(/,/g, '&#44;') : '',
 					body: body,
+
+					isMain: data.isMain,
 					isTopicOrMain: !!req.query.cid || data.isMain,
 					// minimumTagLength:
 					// maximumTagLength:
